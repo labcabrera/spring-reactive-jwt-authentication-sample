@@ -23,7 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("/user")
 public class UserController {
 
-	@ApiOperation(value = "Display current user information", authorizations = { @Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	@ApiOperation(value = "Display authenticated user information", authorizations = { @Authorization(value = SwaggerConfig.API_KEY_NAME) })
 	@GetMapping
 	public Mono<UserInfo> currentUser(@ApiIgnore ServerWebExchange exchange) {
 		return ReactiveSecurityContextHolder.getContext()

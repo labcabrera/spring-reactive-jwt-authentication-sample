@@ -21,8 +21,8 @@ public class CustomerController implements CustomerControllerDefinition {
 	}
 
 	@Override
-	public Flux<Customer> findAll() {
-		return customerService.findAll();
+	public Flux<Customer> find() {
+		return customerService.find();
 	}
 
 	@Override

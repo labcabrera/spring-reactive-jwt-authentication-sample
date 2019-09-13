@@ -37,7 +37,7 @@ public interface CustomerControllerDefinition {
 	@GetMapping
 	@ApiOperation(value = "Find All", response = Customer.class, authorizations = {
 		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
-	Flux<Customer> findAll();
+	Flux<Customer> find();
 
 	@PostMapping
 	@ApiOperation(value = "Creates a new customer", authorizations = {
