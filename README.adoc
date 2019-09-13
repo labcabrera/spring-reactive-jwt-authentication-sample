@@ -12,14 +12,100 @@ La definición de la API es un CRUD básico con RSQL para las búsquedas:
 
 
 [source,java]
-.CustomerControllerDefinition.java
 ----
-include::src/main/java/com/github/labcabrera/jwt/sample/controller/CustomerControllerDefinition.java[tags=readme]
+@RequestMapping(value = "customers", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "Customers")
+public interface CustomerControllerDefinition {
+
+	@GetMapping("/id")
+	@ApiOperation(value = "Find customer by id", response = Customer.class, authorizations = {
+		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	Mono<Customer> findOne(@ApiParam(value = "Customer identifier", required = true) @PathVariable final String id);
+
+	@GetMapping
+	@ApiOperation(value = "Find by rsql", response = Customer.class, authorizations = {
+		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "page", value = "Page", required = false, dataType = "string", paramType = "query", defaultValue = "0"),
+		@ApiImplicitParam(name = "size", value = "Size", required = false, dataType = "string", paramType = "query", defaultValue = "10"),
+		@ApiImplicitParam(name = "sort", value = "Sort", required = false, dataType = "string", paramType = "query", example = "") })
+	Flux<Customer> find(
+		@ApiParam(value = "RSQL expression", required = false, defaultValue = "")
+		@RequestParam(value = "search", required = false, defaultValue = "") final String rsql,
+		
+		@ApiParam(value = "Page default value", required = false, example = "0")
+		@RequestParam(name = "page", defaultValue = "0") final int page,
+		
+		@ApiParam(value = "Size default value", required = false, example = "10")
+		@RequestParam(name = "size", defaultValue = "10") final int size);
+
+	@PostMapping
+	@ApiOperation(value = "Creates a new customer", authorizations = {
+		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	@ResponseStatus(HttpStatus.CREATED)
+	Mono<Customer> create(@ApiParam(value = "Customer object", required = true) @RequestBody @Valid Customer customer);
+
+	@PutMapping("/{id}")
+	@ResponseBody
+	@ApiOperation(value = "Update customer data", authorizations = {
+		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	Mono<Customer> update(
+		@ApiParam(value = "Customer identifier") @PathVariable String id,
+		@ApiParam(value = "Updated customer data", required = true) @RequestBody @Valid Customer customer);
+
+	@DeleteMapping("/{id}")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@ApiOperation(value = "Delete a particular customer", authorizations = {
+		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
+	Mono<Customer> delete(@ApiParam(value = "The customer's id that needs to be deleted") @PathVariable String id);
+}
+
 ----
 
 La implementación de este controlador hace uso del servicio que filtra la información a nivel del usuario que realiza
 la consulta.
+Para ello las entidades que queremos securizar implementarán la interface:
 
+
+[source,java]
+----
+public interface HasAuthorization extends HasId {
+
+	List<String> getAuthorization();
+
+	void setAuthorization(List<String> permissions);
+
+}
+----
+
+De modo que simplemente en nuestro servicio podamos realizar las búsquedas a partir del contexto de seguridad:
+
+[source,java]
+----
+public Flux<E> findByRsql(String rsql, int page, int size) {
+		return ReactiveSecurityContextHolder.getContext()
+			.map(SecurityContext::getAuthentication)
+			.flatMapMany(e -> findByRsqlWithAuthentication(rsql, page, size, e));
+	}
+
+	public Flux<E> findByRsqlWithAuthentication(String rsql, int page, int size, Authentication authentication) {
+		List<String> authorizations = authentication.getAuthorities().stream()
+			.map(e -> e.getAuthority()).collect(Collectors.toList());
+		Criteria criteria;
+		if (StringUtils.isNotBlank(rsql)) {
+			Criteria rsqlCriteria = rsqlParser.getCriteria(rsql, Customer.class);
+			criteria = Criteria.where("authorization").in(authorizations).andOperator(rsqlCriteria);
+		}
+		else {
+			criteria = Criteria.where("authorization").in(authorizations);
+		}
+		Query query = new Query(criteria);
+		return template
+			.find(query, getEntityClass())
+			.skip(page * size)
+			.take(size);
+	}
+----
 
 
 == Pruebas

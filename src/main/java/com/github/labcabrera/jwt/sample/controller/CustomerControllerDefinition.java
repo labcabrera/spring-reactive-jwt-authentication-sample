@@ -28,7 +28,6 @@ import io.swagger.annotations.Authorization;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// tag::readme[]
 @RequestMapping(value = "customers", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(value = "Customers")
 public interface CustomerControllerDefinition {
@@ -71,4 +70,3 @@ public interface CustomerControllerDefinition {
 	Mono<Customer> delete(@ApiParam(value = "The customer's id that needs to be deleted") @PathVariable String id);
 
 }
-// end::readme[]
