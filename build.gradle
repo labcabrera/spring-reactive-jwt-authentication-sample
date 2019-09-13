@@ -1,0 +1,48 @@
+plugins {
+	id 'org.springframework.boot'        version '2.1.8.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+}
+
+ext {
+	set('jwtStarterVersion', '0.1.0-SNAPSHOT')
+	set('springfoxVersion', '3.0.0-SNAPSHOT')
+	set('jsonwebtokenVersion','0.9.1')
+}
+
+group = 'com.github.labcabrera'
+version = version
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	//implementation "com.github.labcabrera:spring-reactive-jwt-authentication-starter:${jwtStarterVersion}"
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.integration:spring-integration-webflux'
+	implementation "io.jsonwebtoken:jjwt:${jsonwebtokenVersion}"
+	implementation "io.springfox:springfox-swagger2:${springfoxVersion}"
+	implementation "io.springfox:springfox-spring-webflux:${springfoxVersion}"
+	implementation "io.springfox:springfox-swagger-ui:${springfoxVersion}"
+	implementation "io.springfox:springfox-spring-integration-webflux:${springfoxVersion}"
+	
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testCompile 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}

@@ -1,0 +1,34 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/samples-jwt-reactive
+
+logging:
+  level:
+    root: debug
+    com.github: debug
+    org.mongodb.driver: info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+security:
+  jwt:
+    secret: changeit
+    unsecured-paths: '/,/v2/api-docs,/swagger-ui.html,/swagger-resources/**,/webjars/**,/actuator,/actuator/**,/csrf'
+    
+app:
+  api:
+    swagger:
+      base-package: com.github.labcabrera
+      doc:
+        title: Reactive JWT API Sample 
+        description: >
+          This is a sample API.
+        version: v1
