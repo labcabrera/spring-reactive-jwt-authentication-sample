@@ -1,3 +1,29 @@
-# spring-reactive-jwt-authentication-sample
+= spring-reactive-jwt-authentication-sample
+
+Ejemplo de una API Reactiva securizada con JWT basada en Spring Boot.
+
+En el ejemplo tendremos en MongoDB una lista de clientes asociados a diferentes distribuidores. Cada distribuidor
+sólamente podrá tener acceso a sus propios clientes.
+
+Para ello incluiremos un filtro en el que leeremos del token JWT la lista de autorizaciones disponibles.
 
 
+La definición de la API es un CRUD básico con RSQL para las búsquedas:
+
+
+[source,java]
+.CustomerControllerDefinition.java
+----
+include::src/main/java/com/github/labcabrera/jwt/sample/controller/CustomerControllerDefinition.java[tags=readme]
+----
+
+La implementación de este controlador hace uso del servicio que filtra la información a nivel del usuario que realiza
+la consulta.
+
+
+
+== Pruebas
+
+Para obtener los tokens podemos ejecutar la clase _PrintDemoTokens_ que se encuentra en la carpeta de tests.
+
+Podremos acceder a la consola de Swagger en http://localhost:8080/swagger-io.html
