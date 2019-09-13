@@ -21,8 +21,8 @@ public class CustomerController implements CustomerControllerDefinition {
 	}
 
 	@Override
-	public Flux<Customer> find() {
-		return customerService.find();
+	public Flux<Customer> find(String rsql, int page, int size) {
+		return customerService.findByRsql(rsql, page, size);
 	}
 
 	@Override
