@@ -22,6 +22,8 @@ import reactor.core.publisher.Mono;
 
 public abstract class HasAutorizationEntityService<E extends HasAuthorization> {
 
+	private static final String AUTHORIZATION = "authorization";
+
 	@Autowired
 	private ReactiveMongoTemplate template;
 
@@ -36,7 +38,7 @@ public abstract class HasAutorizationEntityService<E extends HasAuthorization> {
 
 	public Mono<E> findByIdWithAuthentication(String id, Authentication auth) {
 		List<String> authorizations = auth.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
-		Query query = new Query(Criteria.where("id").is(id).and("authorization").in(authorizations));
+		Query query = new Query(Criteria.where("id").is(id).and(AUTHORIZATION).in(authorizations));
 		Mono<E> fallback = Mono.error(new InsufficientAuthenticationException("Forbidden"));
 		return template.findOne(query, getEntityClass()).switchIfEmpty(fallback);
 	}
@@ -49,7 +51,7 @@ public abstract class HasAutorizationEntityService<E extends HasAuthorization> {
 
 	public Flux<E> findAllWithAuthentication(Authentication authentication) {
 		List<String> authorizations = authentication.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
-		Query query = new Query(Criteria.where("authorization").in(authorizations));
+		Query query = new Query(Criteria.where(AUTHORIZATION).in(authorizations));
 		return template.find(query, getEntityClass());
 	}
 
@@ -59,21 +61,30 @@ public abstract class HasAutorizationEntityService<E extends HasAuthorization> {
 			.flatMapMany(e -> findByRsqlWithAuthentication(rsql, page, size, e));
 	}
 
-	public Flux<E> findByRsqlWithAuthentication(String rsql, int page, int size, Authentication authentication) {
+	public Flux<E> findByRsqlWithAuthentication(String rsql, long page, long size, Authentication authentication) {
 		List<String> authorizations = authentication.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
 		Criteria criteria;
 		if (StringUtils.isNotBlank(rsql)) {
 			Criteria rsqlCriteria = rsqlParser.getCriteria(rsql, Customer.class);
-			criteria = Criteria.where("authorization").in(authorizations).andOperator(rsqlCriteria);
+			criteria = Criteria.where(AUTHORIZATION).in(authorizations).andOperator(rsqlCriteria);
 		}
 		else {
-			criteria = Criteria.where("authorization").in(authorizations);
+			criteria = Criteria.where(AUTHORIZATION).in(authorizations);
 		}
 		Query query = new Query(criteria);
 		return template
 			.find(query, getEntityClass())
 			.skip(page * size)
 			.take(size);
+	}
+
+	public Mono<E> insert(E customer) {
+		return ReactiveSecurityContextHolder.getContext()
+			.map(SecurityContext::getAuthentication)
+			.flatMap(e -> {
+				customer.setAuthorization(e.getAuthorities().stream().map(g -> g.getAuthority()).collect(Collectors.toList()));
+				return template.save(customer);
+			});
 	}
 
 	protected abstract Class<E> getEntityClass();
