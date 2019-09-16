@@ -2,7 +2,9 @@
 
 image:https://travis-ci.org/labcabrera/spring-reactive-jwt-authentication-sample.svg?branch=develop["Build Status", link="https://travis-ci.org/labcabrera/spring-reactive-jwt-authentication-sample"]
 
-Ejemplo de una API Reactiva securizada con JWT basada en Spring Boot.
+Ejemplo de una API Reactiva securizada con JWT basada en Spring Boot. La API recibirá como cabecera de seguridad
+un token JWT con la lista de claims autorizados. La API *no se encargará de generar dichos tokens*, ya que para
+nuestro caso asumimos que será un servicio externo el encargado de la autenticación.
 
 En el ejemplo tendremos en MongoDB una lista de clientes asociados a diferentes distribuidores. Cada distribuidor
 sólamente podrá tener acceso a sus propios clientes.
@@ -116,4 +118,6 @@ public Flux<E> findByRsqlWithAuthentication(String rsql, int page, int size, Aut
 
 Para obtener los tokens podemos ejecutar la clase _PrintDemoTokens_ que se encuentra en la carpeta de tests.
 
-Podremos acceder a la consola de Swagger en http://localhost:8080/swagger-io.html
+Podremos acceder a la consola de Swagger en http://localhost:8080/swagger-io.html.
+
+También desde 
