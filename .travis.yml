@@ -2,4 +2,12 @@ language: java
 jdk:
 - openjdk8
 services:
-  - mongodb
+- mongodb
+addons:
+  sonarcloud:
+    organization: "labcabrera"
+    token:
+      secure: "VIgTYHDapT+G7TpFzhQgSINPXZrH8KVLl0HJ4KHFyJORV/sXFtteF6otUfqYaXbO8V662/3yrqnDY1mjdQAbQ02XuV7L2YZ35G/I2j0mCGyT5VYqoA32Unw2mJturOKvnRspDWkgjeNigBX0tVR/TzjGIFtuyNB9BWJS1SSDfrG4SpNOOMUfGH/340W8faIuQqtU7GTKJtpslhJbzBolZ+a9W9GL1JWUVa8L3kDBJUvApUxW5HQbXpgd1oYNbLKTja01Jg1b9LoTx7REANGihv9AzZTsQ7mQLC6NNI7b6jK6+6L4yo+sFiqd3HZJkQ+XT/hplw2pRxNvRBV6fK0BXWtBfjT6MAclrPGeZTIR2c/By5nfM6TTIjvbmZTQ0W1LcPa7vWjIQCb4/Ge2qlJN+UbLcbVxy+sVJQMRkT/7MFLiHhzEGm1PtXezqf5+gPaOk3SxdxJxDGrpBQMlxniK1pe1E1rrlGuYCM/0CU6QmVDwCn3prz6Ig/+oFa0oFVth5FIUHv31ABONEUxXSPIFvOYsbYDv8y69F1rkwOs2oIgNzudr3hy+h4AJWOMng7UbNhEbBkTJ7HK9FaBL5v4jn2ybAREAROkt1g1KKvnjjuLJjwBh+65u7LwxHFgSFnxA9y5e9JQuNt/bFB+cg9wBdGDpSKgJdvERYMhpUZI2q44="
+
+  script:
+  - ./gradlew sonarqube

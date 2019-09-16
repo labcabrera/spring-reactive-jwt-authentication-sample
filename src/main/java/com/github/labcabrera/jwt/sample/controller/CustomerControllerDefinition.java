@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -64,7 +63,6 @@ public interface CustomerControllerDefinition {
 		@ApiParam(value = "Updated customer data", required = true) @RequestBody @Valid Customer customer);
 
 	@DeleteMapping("/{id}")
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ApiOperation(value = "Delete a particular customer", authorizations = {
 		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
 	Mono<Customer> delete(@ApiParam(value = "The customer's id that needs to be deleted") @PathVariable String id);

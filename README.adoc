@@ -58,7 +58,6 @@ public interface CustomerControllerDefinition {
     @ApiParam(value = "Updated customer data", required = true) @RequestBody @Valid Customer customer);
 
   @DeleteMapping("/{id}")
-  @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
   @ApiOperation(value = "Delete a particular customer", authorizations = {
     @Authorization(value = SwaggerConfig.API_KEY_NAME) })
   Mono<Customer> delete(
