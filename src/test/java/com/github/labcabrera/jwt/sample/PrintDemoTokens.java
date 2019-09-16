@@ -20,20 +20,23 @@ public class PrintDemoTokens {
 		printToken("api-operator", Arrays.asList("api-operator"));
 	}
 
-	private void printToken(String username, List<String> roles) {
+	public String generateTestToken(String username, List<String> roles) {
 		String issuer = "sample-app";
 		String secret = "changeit";
 		int expiration = 60000;
-
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expirationDate = now.plusMinutes(expiration);
 		ZoneId zoneId = ZoneId.systemDefault();
-		String token = Jwts.builder()
+		return Jwts.builder()
 			.setIssuedAt(Date.from(now.atZone(zoneId).toInstant()))
 			.setExpiration(Date.from(expirationDate.atZone(zoneId).toInstant())).setIssuer(issuer)
 			.setSubject(username).claim("roles", roles)
 			.signWith(SignatureAlgorithm.HS512, secret)
 			.compact();
+	}
+
+	private void printToken(String username, List<String> roles) {
+		String token = generateTestToken(username, roles);
 		System.out.println("Token " + username + ":");
 		System.out.println("Bearer " + token);
 		System.out.println();

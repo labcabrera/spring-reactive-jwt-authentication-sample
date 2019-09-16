@@ -28,11 +28,11 @@ import io.swagger.annotations.Authorization;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RequestMapping(value = "customers", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(value = "Customers")
 public interface CustomerControllerDefinition {
 
-	@GetMapping("/id")
+	@GetMapping("/{id}")
 	@ApiOperation(value = "Find customer by id", response = Customer.class, authorizations = {
 		@Authorization(value = SwaggerConfig.API_KEY_NAME) })
 	Mono<Customer> findOne(@ApiParam(value = "Customer identifier", required = true) @PathVariable final String id);

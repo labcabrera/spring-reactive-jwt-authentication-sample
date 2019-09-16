@@ -12,7 +12,6 @@ public class SampleApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleApplication.class, args);
-
 	}
 
 	@Autowired

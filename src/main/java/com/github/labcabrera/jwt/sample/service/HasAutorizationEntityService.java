@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,7 +37,8 @@ public abstract class HasAutorizationEntityService<E extends HasAuthorization> {
 	public Mono<E> findByIdWithAuthentication(String id, Authentication auth) {
 		List<String> authorizations = auth.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
 		Query query = new Query(Criteria.where("id").is(id).and("authorization").in(authorizations));
-		return template.findOne(query, getEntityClass());
+		Mono<E> fallback = Mono.error(new InsufficientAuthenticationException("Forbidden"));
+		return template.findOne(query, getEntityClass()).switchIfEmpty(fallback);
 	}
 
 	public Flux<E> findAll() {
