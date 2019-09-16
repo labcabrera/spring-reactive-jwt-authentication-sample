@@ -1,4 +1,6 @@
-= spring-reactive-jwt-authentication-sample
+= Reactive example aplication using Spring Boot + JWT filter
+
+image:https://travis-ci.org/labcabrera/spring-reactive-jwt-authentication-sample.svg?branch=develop["Build Status", link="https://travis-ci.org/labcabrera/spring-reactive-jwt-authentication-sample"]
 
 Ejemplo de una API Reactiva securizada con JWT basada en Spring Boot.
 
